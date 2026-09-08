@@ -57,7 +57,7 @@ input string or slice, they always return the same output, and neither
 touches a file, the network, or the clock (except to convert a bookmark's
 own `ADD_DATE` attribute). `main.go` is the only place that touches disk.
 That split is what makes the core logic testable without fixture files on
-disk — see `bookmarks/duplicates_test.go`.
+disk — see `bookmarks/duplicates_test.go` and `bookmarks/parse_test.go`.
 
 ## Status
 
