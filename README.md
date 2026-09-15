@@ -35,6 +35,16 @@ no duplicate bookmarks found
 (The second line only prints if there are none — the tool prints one or
 the other, not both.)
 
+Pass `--json` to get the duplicate groups as JSON instead, one array of
+`{NormalizedURL, Bookmarks}` objects, for piping into another tool:
+
+```
+go run . --json ~/Downloads/bookmarks.html
+```
+
+With no duplicates this prints `[]` rather than plain text, so scripts
+consuming it don't need a special case.
+
 ## How it decides two bookmarks are duplicates
 
 Two bookmarks are considered the same page if, after normalizing the URL,

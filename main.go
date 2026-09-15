@@ -3,6 +3,8 @@
 package main
 
 import (
+	"encoding/json"
+	"flag"
 	"fmt"
 	"os"
 
@@ -10,12 +12,18 @@ import (
 )
 
 func main() {
-	if len(os.Args) != 2 {
-		fmt.Fprintln(os.Stderr, "usage: bookmarkdupes <exported-bookmarks.html>")
+	jsonOutput := flag.Bool("json", false, "print duplicate groups as JSON instead of plain text")
+	flag.Usage = func() {
+		fmt.Fprintln(os.Stderr, "usage: bookmarkdupes [--json] <exported-bookmarks.html>")
+	}
+	flag.Parse()
+
+	if flag.NArg() != 1 {
+		flag.Usage()
 		os.Exit(1)
 	}
 
-	data, err := os.ReadFile(os.Args[1])
+	data, err := os.ReadFile(flag.Arg(0))
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "reading file: %v\n", err)
 		os.Exit(1)
@@ -28,6 +36,20 @@ func main() {
 	}
 
 	dupes := bookmarks.FindDuplicates(marks)
+
+	if *jsonOutput {
+		// Encode as [] rather than null when there are no duplicates, so
+		// consumers don't need a nil check before ranging over the result.
+		if dupes == nil {
+			dupes = []bookmarks.DuplicateGroup{}
+		}
+		if err := json.NewEncoder(os.Stdout).Encode(dupes); err != nil {
+			fmt.Fprintf(os.Stderr, "encoding json: %v\n", err)
+			os.Exit(1)
+		}
+		return
+	}
+
 	if len(dupes) == 0 {
 		fmt.Println("no duplicate bookmarks found")
 		return
