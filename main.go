@@ -13,8 +13,9 @@ import (
 
 func main() {
 	jsonOutput := flag.Bool("json", false, "print duplicate groups as JSON instead of plain text")
+	folder := flag.String("folder", "", "only look for duplicates under this folder (and its subfolders)")
 	flag.Usage = func() {
-		fmt.Fprintln(os.Stderr, "usage: bookmarkdupes [--json] <exported-bookmarks.html>")
+		fmt.Fprintln(os.Stderr, "usage: bookmarkdupes [--json] [--folder <path>] <exported-bookmarks.html>")
 	}
 	flag.Parse()
 
@@ -34,6 +35,8 @@ func main() {
 		fmt.Fprintf(os.Stderr, "parsing bookmarks: %v\n", err)
 		os.Exit(1)
 	}
+
+	marks = bookmarks.FilterByFolder(marks, *folder)
 
 	dupes := bookmarks.FindDuplicates(marks)
 

@@ -45,6 +45,16 @@ go run . --json ~/Downloads/bookmarks.html
 With no duplicates this prints `[]` rather than plain text, so scripts
 consuming it don't need a special case.
 
+Pass `--folder` to only look for duplicates under one folder (and its
+subfolders), ignoring everything filed elsewhere:
+
+```
+go run . --folder Work/Reading ~/Downloads/bookmarks.html
+```
+
+The match is case-insensitive and includes subfolders, so `--folder Work`
+also covers `Work/Reading`.
+
 ## How it decides two bookmarks are duplicates
 
 Two bookmarks are considered the same page if, after normalizing the URL,

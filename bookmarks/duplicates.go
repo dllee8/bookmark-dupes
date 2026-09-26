@@ -39,6 +39,26 @@ func NormalizeURL(raw string) string {
 	return normalized
 }
 
+// FilterByFolder returns only the bookmarks filed under folder, matching
+// both that folder itself and any of its subfolders. Comparison is
+// case-insensitive. An empty folder returns bookmarks unchanged.
+func FilterByFolder(bookmarks []Bookmark, folder string) []Bookmark {
+	if folder == "" {
+		return bookmarks
+	}
+	folder = strings.TrimSuffix(folder, "/")
+	folderLower := strings.ToLower(folder)
+
+	var result []Bookmark
+	for _, b := range bookmarks {
+		bLower := strings.ToLower(b.Folder)
+		if bLower == folderLower || strings.HasPrefix(bLower, folderLower+"/") {
+			result = append(result, b)
+		}
+	}
+	return result
+}
+
 // FindDuplicates groups bookmarks that resolve to the same NormalizeURL
 // value and returns only the groups with more than one member, ordered
 // from most-duplicated to least.
